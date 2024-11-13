@@ -5,7 +5,7 @@
   <title></title>
   <style>
       body {
-        background-color: lightblue;
+        background-color: #f1f0e8;
         text-align: center;
       }
       
@@ -49,22 +49,30 @@
 </head>
 <body>
   <script>
-    const AS_URL_BASE = "https://script.google.com/macros/s/AKfycbxmpr9PrhxFm-BDq7RZ1X6ytsxBC-m72oMHNnaJlEJ33Sm1MQsPZtcgItdbsIhMYSgYdA/exec";
+    const AS_URL_BASE = "https://script.google.com/macros/s/AKfycbxe50Lj32aHcC-B_L5aHduD_hsFlMgwe1VmQ_S9eG6enMn5X5aNCAaAMXcVfR5fJWzp/exec";
     
-    var url = document.location.href;
-    var k = url.substr(url.lastIndexOf("k=")+2);
+    const urlParams = new URLSearchParams(window.location.search);
+    let k = urlParams.get('k'); // Extraemos el valor de k
     
-    if(k){
-      fetch(AS_URL_BASE+'?k='+k)
-      .then(r => r.text())
-      .then((r) => {
-        console.log(r);
-        //document.write(r);
-        if(r){
-          document.location.replace(r);
-        }
-      })
-      .catch(err => console.log(err))
+    console.log("Valor de k:", k);
+    
+    if (k) {
+      fetch("https://api.ipify.org?format=json")
+        .then(response => response.json())
+        .then(data => {
+          const userIp = data.ip;
+    
+          fetch(`${AS_URL_BASE}?k=${k}&ip=${userIp}`)
+            .then(r => r.text())
+            .then((r) => {
+              console.log(r);
+              if (r) {
+                document.location.replace(r);
+              }
+            })
+            .catch(err => console.log(err));
+        })
+        .catch(err => console.log("Error obteniendo IP:", err));
     }
 
   </script>
